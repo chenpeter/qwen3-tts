@@ -9,7 +9,8 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-:root {
+:root,
+[data-theme="dark"] {
   --bg:        #0c0c0e;
   --surface:   #161619;
   --surface-2: #1e1e22;
@@ -19,11 +20,26 @@
   --text-dim:  #8a8891;
   --accent:    #c4f04d;
   --accent-dim:#a3cc2e;
+  --accent-fg: #0c0c0e;
   --danger:    #f04d4d;
   --radius:    12px;
   --radius-sm: 8px;
   --font:      'DM Sans', system-ui, sans-serif;
   --mono:      'JetBrains Mono', monospace;
+}
+
+[data-theme="light"] {
+  --bg:        #f5f5f0;
+  --surface:   #ffffff;
+  --surface-2: #ededea;
+  --border:    #d8d8d2;
+  --border-hi: #c0c0b8;
+  --text:      #1a1a1a;
+  --text-dim:  #6b6b63;
+  --accent:    #3a7d20;
+  --accent-dim:#2e6519;
+  --accent-fg: #ffffff;
+  --danger:    #c93030;
 }
 
 html { font-size: 15px; }
@@ -43,9 +59,32 @@ body {
   padding: 48px 24px 80px;
 }
 
+/* --- theme toggle --- */
+.theme-toggle {
+  position: absolute;
+  top: 0; right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  width: 36px; height: 36px;
+  transition: border-color .2s, background .2s;
+}
+.theme-toggle:hover { border-color: var(--border-hi); }
+.theme-toggle svg { width: 16px; height: 16px; color: var(--text-dim); transition: color .2s; }
+.theme-toggle:hover svg { color: var(--text); }
+.theme-toggle .icon-sun  { display: none; }
+.theme-toggle .icon-moon { display: block; }
+[data-theme="light"] .theme-toggle .icon-sun  { display: block; }
+[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+
 /* --- header --- */
 header {
   margin-bottom: 48px;
+  position: relative;
 }
 header .badge {
   display: inline-block;
@@ -244,10 +283,123 @@ select { cursor: pointer; appearance: none;
   position: absolute;
   left: 5px; top: 2px;
   width: 5px; height: 9px;
-  border: solid var(--bg); border-width: 0 2px 2px 0;
+  border: solid var(--accent-fg); border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
 .check-row span { font-size: .82rem; color: var(--text-dim); }
+
+/* --- advanced toggle --- */
+.adv-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  transition: border-color .2s, color .2s;
+  margin-bottom: 20px;
+}
+.adv-toggle:hover { border-color: var(--border-hi); color: var(--text); }
+.adv-toggle .chevron {
+  transition: transform .2s;
+  width: 14px; height: 14px;
+  flex-shrink: 0;
+}
+.adv-toggle.open .chevron { transform: rotate(90deg); }
+.adv-panel { display: none; }
+.adv-panel.open { display: block; }
+
+/* --- slider row --- */
+.slider-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+}
+.slider-field {
+  margin-bottom: 18px;
+}
+.slider-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.slider-label {
+  font-size: .78rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: .02em;
+}
+.slider-hint {
+  font-size: .65rem;
+  color: var(--text-dim);
+  opacity: .6;
+  font-family: var(--mono);
+}
+.slider-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.slider-control input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.slider-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+  transition: transform .1s;
+}
+.slider-control input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+.slider-control input[type="range"]::-moz-range-thumb {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+}
+.slider-control input[type="number"] {
+  width: 68px;
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  outline: none;
+  text-align: center;
+  transition: border-color .2s;
+  -moz-appearance: textfield;
+}
+.slider-control input[type="number"]:focus {
+  border-color: var(--accent);
+}
+.slider-control input[type="number"]::-webkit-inner-spin-button,
+.slider-control input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
 /* --- generate button --- */
 .gen-wrap { margin-top: 28px; }
@@ -257,7 +409,7 @@ select { cursor: pointer; appearance: none;
   font-size: .92rem;
   font-weight: 600;
   letter-spacing: .01em;
-  color: var(--bg);
+  color: var(--accent-fg);
   background: var(--accent);
   border: none;
   border-radius: var(--radius-sm);
@@ -279,8 +431,8 @@ select { cursor: pointer; appearance: none;
 .gen-btn .spinner {
   display: none;
   width: 16px; height: 16px;
-  border: 2px solid color-mix(in srgb, var(--bg) 30%, transparent);
-  border-top-color: var(--bg);
+  border: 2px solid color-mix(in srgb, var(--accent-fg) 30%, transparent);
+  border-top-color: var(--accent-fg);
   border-radius: 50%;
   animation: spin .6s linear infinite;
 }
@@ -357,6 +509,10 @@ select { cursor: pointer; appearance: none;
 
   <!-- HEADER -->
   <header>
+    <button class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
     <div class="badge">qwen3-tts</div>
     <h1>Voice <span>Clone</span></h1>
     <p>Upload a reference audio sample, provide its transcript, then generate new speech in any of 10 languages using the cloned voice.</p>
@@ -421,12 +577,80 @@ select { cursor: pointer; appearance: none;
     </div>
   </div>
 
+  <!-- ADVANCED SETTINGS -->
+  <button class="adv-toggle" id="advToggle">
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    Advanced Settings
+  </button>
+
+  <div class="card adv-panel" id="advPanel">
+    <div class="card-label"><span class="dot"></span> Generation Parameters</div>
+    <div class="slider-row">
+
+      <div class="slider-field">
+        <div class="slider-head">
+          <span class="slider-label">Temperature</span>
+          <span class="slider-hint">default 0.9</span>
+        </div>
+        <div class="slider-control">
+          <input type="range" id="tempSlider" min="0.1" max="1.5" step="0.05" value="0.9">
+          <input type="number" id="tempNum" min="0.1" max="1.5" step="0.05" value="0.9">
+        </div>
+      </div>
+
+      <div class="slider-field">
+        <div class="slider-head">
+          <span class="slider-label">Top-K</span>
+          <span class="slider-hint">default 50</span>
+        </div>
+        <div class="slider-control">
+          <input type="range" id="topkSlider" min="1" max="100" step="1" value="50">
+          <input type="number" id="topkNum" min="1" max="100" step="1" value="50">
+        </div>
+      </div>
+
+      <div class="slider-field">
+        <div class="slider-head">
+          <span class="slider-label">Top-P</span>
+          <span class="slider-hint">default 1.0</span>
+        </div>
+        <div class="slider-control">
+          <input type="range" id="toppSlider" min="0.1" max="1.0" step="0.05" value="1.0">
+          <input type="number" id="toppNum" min="0.1" max="1.0" step="0.05" value="1.0">
+        </div>
+      </div>
+
+      <div class="slider-field">
+        <div class="slider-head">
+          <span class="slider-label">Repetition Penalty</span>
+          <span class="slider-hint">default 1.05</span>
+        </div>
+        <div class="slider-control">
+          <input type="range" id="repSlider" min="1.0" max="2.0" step="0.05" value="1.05">
+          <input type="number" id="repNum" min="1.0" max="2.0" step="0.05" value="1.05">
+        </div>
+      </div>
+
+      <div class="slider-field">
+        <div class="slider-head">
+          <span class="slider-label">Max New Tokens</span>
+          <span class="slider-hint">default 4096</span>
+        </div>
+        <div class="slider-control">
+          <input type="range" id="maxtokSlider" min="512" max="8192" step="256" value="4096">
+          <input type="number" id="maxtokNum" min="512" max="8192" step="256" value="4096">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- GENERATE -->
   <div class="gen-wrap">
     <button class="gen-btn" id="genBtn">
       <span class="spinner"></span>
       <span class="btn-label">Generate</span>
-      <span class="btn-loading">Generating&hellip;</span>
+      <span class="btn-loading">Generating &mdash; <span id="elapsed">0s</span></span>
     </button>
   </div>
 
@@ -445,7 +669,23 @@ select { cursor: pointer; appearance: none;
 </div>
 
 <script>
+// --- theme (runs immediately) ---
+(function initTheme() {
+  const saved = localStorage.getItem('theme');
+  const theme = saved || 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+
 (() => {
+  // --- theme toggle ---
+  const themeToggle = document.querySelector('#themeToggle');
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  });
+
   // --- refs ---
   const $ = s => document.querySelector(s);
   const dropzone     = $('#dropzone');
@@ -467,11 +707,33 @@ select { cursor: pointer; appearance: none;
 
   let selectedFile = null;
 
+  // --- advanced panel toggle ---
+  const advToggle = $('#advToggle');
+  const advPanel  = $('#advPanel');
+  advToggle.addEventListener('click', () => {
+    advToggle.classList.toggle('open');
+    advPanel.classList.toggle('open');
+  });
+
+  // --- slider / number sync ---
+  function syncPair(sliderId, numId) {
+    const slider = $(sliderId);
+    const num    = $(numId);
+    slider.addEventListener('input', () => { num.value = slider.value; });
+    num.addEventListener('input', () => { slider.value = num.value; });
+  }
+  syncPair('#tempSlider',   '#tempNum');
+  syncPair('#topkSlider',   '#topkNum');
+  syncPair('#toppSlider',   '#toppNum');
+  syncPair('#repSlider',    '#repNum');
+  syncPair('#maxtokSlider', '#maxtokNum');
+
   // --- load languages ---
   fetch('/api/languages')
     .then(r => r.json())
     .then(langs => {
-      const opts = ['Auto', ...langs];
+      const filtered = langs.filter(l => l.toLowerCase() !== 'auto');
+      const opts = ['Auto', ...filtered];
       language.innerHTML = opts.map(l => `<option value="${l}">${l}</option>`).join('');
     });
 
@@ -518,6 +780,33 @@ select { cursor: pointer; appearance: none;
   }
   function hideStatus() { statusBar.className = 'status-bar'; }
 
+  // --- elapsed timer ---
+  const elapsedEl = $('#elapsed');
+  let timerInterval = null;
+  let startTime = 0;
+
+  function fmtElapsed(ms) {
+    const s = Math.floor(ms / 1000);
+    if (s < 60) return s + 's';
+    const m = Math.floor(s / 60);
+    return m + 'm ' + (s % 60) + 's';
+  }
+
+  function startTimer() {
+    startTime = Date.now();
+    elapsedEl.textContent = '0s';
+    showStatus('Generating speech\u2026', 'info');
+    timerInterval = setInterval(() => {
+      const el = fmtElapsed(Date.now() - startTime);
+      elapsedEl.textContent = el;
+      statusBar.textContent = 'Generating speech\u2026 ' + el;
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  }
+
   // --- generate ---
   genBtn.addEventListener('click', async () => {
     hideStatus();
@@ -531,6 +820,7 @@ select { cursor: pointer; appearance: none;
 
     genBtn.classList.add('loading');
     genBtn.disabled = true;
+    startTimer();
 
     const fd = new FormData();
     fd.append('ref_audio', selectedFile);
@@ -538,6 +828,11 @@ select { cursor: pointer; appearance: none;
     fd.append('target_text', targetText.value.trim());
     fd.append('language', language.value);
     fd.append('x_vector_only', xVectorOnly.checked ? 'true' : 'false');
+    fd.append('temperature', $('#tempNum').value);
+    fd.append('top_k', $('#topkNum').value);
+    fd.append('top_p', $('#toppNum').value);
+    fd.append('repetition_penalty', $('#repNum').value);
+    fd.append('max_new_tokens', $('#maxtokNum').value);
 
     try {
       const res = await fetch('/api/generate', { method: 'POST', body: fd });
@@ -547,15 +842,17 @@ select { cursor: pointer; appearance: none;
         throw new Error(data.error || `Server error ${res.status}`);
       }
 
+      const totalTime = fmtElapsed(Date.now() - startTime);
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       outputAudio.src = url;
       dlBtn.href = url;
       outputCard.classList.add('visible');
-      showStatus('Generation complete.', 'info');
+      showStatus('Generation complete in ' + totalTime + '.', 'info');
     } catch (err) {
       showStatus(err.message, 'error');
     } finally {
+      stopTimer();
       genBtn.classList.remove('loading');
       genBtn.disabled = false;
     }

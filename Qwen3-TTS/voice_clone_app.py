@@ -81,6 +81,13 @@ def api_generate():
     language = (request.form.get("language") or "Auto").strip()
     x_vector_only = request.form.get("x_vector_only") == "true"
 
+    # Advanced generation params (with defaults)
+    temperature = float(request.form.get("temperature", 0.9))
+    top_k = int(request.form.get("top_k", 50))
+    top_p = float(request.form.get("top_p", 1.0))
+    repetition_penalty = float(request.form.get("repetition_penalty", 1.05))
+    max_new_tokens = int(request.form.get("max_new_tokens", 4096))
+
     if not ref_audio_file:
         return jsonify({"error": "Reference audio is required."}), 400
     if not target_text:
@@ -100,16 +107,16 @@ def api_generate():
             ref_audio=tmp_path,
             ref_text=ref_text if ref_text else None,
             x_vector_only_mode=x_vector_only,
-            max_new_tokens=4096,
+            max_new_tokens=max_new_tokens,
             do_sample=True,
-            top_k=50,
-            top_p=1.0,
-            temperature=0.9,
-            repetition_penalty=1.05,
+            top_k=top_k,
+            top_p=top_p,
+            temperature=temperature,
+            repetition_penalty=repetition_penalty,
             subtalker_dosample=True,
-            subtalker_top_k=50,
-            subtalker_top_p=1.0,
-            subtalker_temperature=0.9,
+            subtalker_top_k=top_k,
+            subtalker_top_p=top_p,
+            subtalker_temperature=temperature,
         )
 
         buf = io.BytesIO()
